@@ -11,7 +11,6 @@
       <div id = "main-menu">
         <h2>Main Menu</h2>
         <ul>
-          <li><a href = "services/place_order.php">Place an Order </a></li>
           
           <li><a href = "services/store_locator.php">Find a Local Warehouse</a></li>
         </ul>
