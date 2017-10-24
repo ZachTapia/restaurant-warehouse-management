@@ -1,9 +1,17 @@
 <?php
-  $warehouses = [
-    ['warehouseID' => '1', 'warehouseName' => 'Action Sales', 'phoneNumber' => '(626) 308-1988', 'city' => 'Monterey Park', 'address' => '415 S Atlantic Blvd', 'ZIP' => '91754', 'managerName' => 'Jon Leo', 'inventoryType' => 'Machinery', 'deliversNextDay' => 'F'],
-   
-  ];
+  
+  $conn = new mysqli('localhost', 'root', 'root', 'restaurant_warehouse');
+  
+  $sql  = "SELECT * FROM warehouses";
+  
+  $result = $conn->query($sql);
+  
+
+  $conn->close();
+  
 ?>
+
+
 
 <!DOCTYPE html>
 <html>
@@ -47,19 +55,19 @@
         				<th>Delivers Next Day</th>
         			</tr>
         
-        		<?php foreach($warehouses as $warehouse) { ?>
+        		<?php foreach($result as $result) { ?>
         			
         			<tr>
-        				<td><?php echo $warehouse['warehouseID']; ?></td>
-        				<td><?php echo $warehouse['warehouseName']; ?></td>
-        				<td><?php echo $warehouse['phoneNumber']; ?></td>
-        				<td><?php echo $warehouse['city']; ?></td>
-        				<td><?php echo $warehouse['address']; ?></td>
-        				<td><?php echo $warehouse['ZIP']; ?></td>
-        				<td><?php echo $warehouse['managerName']; ?></td>
-        				<td><?php echo $warehouse['inventoryType']; ?></td>
-        				<td><?php echo $warehouse['deliversNextDay']; ?></td>
-        				<td><a class="action" href=" <?php echo "place_order.php?id=" . $warehouse['warehouseID'] ?>">Order From</a></td>
+        				<td><?php echo $result['warehouseID']; ?></td>
+        				<td><?php echo $result['warehouseName']; ?></td>
+        				<td><?php echo $result['phoneNumber']; ?></td>
+        				<td><?php echo $result['city']; ?></td>
+        				<td><?php echo $result['address']; ?></td>
+        				<td><?php echo $result['ZIP']; ?></td>
+        				<td><?php echo $result['managerName']; ?></td>
+        				<td><?php echo $result['inventoryType']; ?></td>
+        				<td><?php echo $result['deliversNextDay']; ?></td>
+        				<td><a class="action" href=" <?php echo "place_order.php?id=" . $result['warehouseID'] ?>">Order From</a></td>
         			</tr>
         
         		<?php } ?>

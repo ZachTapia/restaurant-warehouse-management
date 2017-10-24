@@ -1,4 +1,16 @@
-<?php $id = $_GET['id']; ?>
+<?php $id = $_GET['id']; 
+
+$conn = new mysqli('localhost', 'root', 'root', 'restaurant_warehouse');
+
+$sql  = "SELECT * FROM warehouses WHERE warehouseID = $id";
+
+$result = $conn->query($sql);
+
+$resultArray = $result->fetch_assoc();
+
+$conn->close();
+
+?>
 
 <!DOCTYPE html>
 <html>
@@ -24,7 +36,7 @@
      
      
         <div id="content">
-        	<h1><?php echo "Place order from Warehouse ID: " . $id ?> </h1>
+        	<h1><?php echo $resultArray['warehouseName']; ?> </h1>
         </div>
      
 
