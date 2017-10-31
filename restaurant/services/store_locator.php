@@ -55,19 +55,19 @@
         				<th>Delivers Next Day</th>
         			</tr>
         
-        		<?php foreach($result as $result) { ?>
+        		<?php foreach($result as $result => $result_value) { ?>
         			
         			<tr>
-        				<td><?php echo $result['warehouseID']; ?></td>
-        				<td><?php echo $result['warehouseName']; ?></td>
-        				<td><?php echo $result['phoneNumber']; ?></td>
-        				<td><?php echo $result['city']; ?></td>
-        				<td><?php echo $result['address']; ?></td>
-        				<td><?php echo $result['ZIP']; ?></td>
-        				<td><?php echo $result['managerName']; ?></td>
-        				<td><?php echo $result['inventoryType']; ?></td>
-        				<td><?php echo $result['deliversNextDay']; ?></td>
-        				<td><a class="action" href=" <?php echo "place_order.php?id=" . $result['warehouseID'] ?>">Order From</a></td>
+        				<td><?php echo $result_value['warehouseID']; ?></td>
+        				<td><?php echo $result_value['warehouseName']; ?></td>
+        				<td><?php echo $result_value['phoneNumber']; ?></td>
+        				<td><?php echo $result_value['city']; ?></td>
+        				<td><?php echo $result_value['address']; ?></td>
+        				<td><?php echo $result_value['ZIP']; ?></td>
+        				<td><?php echo $result_value['managerName']; ?></td>
+        				<td><?php echo $result_value['inventoryType']; ?></td>
+        				<td><?php echo $result_value['deliversNextDay']; ?></td>
+        				<td><a class="action" href=" <?php echo "place_order.php?id=" . $result_value['warehouseID'] ?>">Order From</a></td>
         			</tr>
         
         		<?php } ?>
