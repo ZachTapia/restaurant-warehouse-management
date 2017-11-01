@@ -47,7 +47,7 @@ navigation ul li {
   margin-right: 1em;
 }
 
-#content {
+#content, #shopping_cart {
   width: 920px;
   min-height: 500px;
   padding: 0 30px;
@@ -89,6 +89,7 @@ table.list tr th {
   background: #0055DD;
   color: white;
   text-align: left;
+  
 }
 
 /* Forms */

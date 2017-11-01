@@ -18,9 +18,13 @@ $inventory = "SELECT * FROM inventory WHERE warehouseID = $id";
 //create result from queries
 $result = $conn->query($warehouses);
 $resultInventory = $conn->query($inventory);
+
+//define product arrays
 $products = array();
 $amounts = array();
 $images = array();
+$warehouseFrom = array();
+
 $name = $result->fetch_assoc();
 
 //put sql items into arrays
@@ -28,7 +32,10 @@ while($row = $resultInventory->fetch_assoc()) {
     $products[] = $row['itemName'];
     $amounts[] = $row['itemPrice'];
     $images[] = $row['itemImage'];
+    $warehouseFrom[] = $row['warehouseID'];
+    
 }
+
 
 
 //check if there is an existing cart, if not make it
@@ -54,8 +61,7 @@ if ( isset($_GET['reset']) )
 }
 
 //add items to cart, gets item from super global
-if ( isset($_GET["add"]) )
-{
+if ( isset($_GET["add"]) ) {
     $i = $_GET["add"];
     $qty = $_SESSION["qty"][$i] + 1;
     $_SESSION["amounts"][$i] = $amounts[$i] * $qty;
@@ -128,7 +134,7 @@ $conn->close();
         			     	<td><?php echo ($products[$i] ); ?></td>
         			     	<td><?php echo ($amounts[$i] ); ?></td>
         			     	<td><image src="<?php echo ($images[$i]); ?>"</td>
-        			     	<td><a href="<?php echo "?id=" . $id . "&?add=" . $i ?>">Add to cart</a></td>
+        			     	<td><a href="?id=<?php echo ($id)?>&add=<?php echo ($i)?>">Add to cart</a></td>
         			     	
         			     </tr>
         			     <?php 
@@ -142,11 +148,11 @@ $conn->close();
         
         <div class = "shopping_cart" >
         	<?php
-                if ( !isset($_SESSION["cart"]) ) {
+                if ( isset($_SESSION["cart"]) ) {
             ?>
         	       <br><br>
         	       <h2>Shopping Cart</h2>
-        	       <table>
+        	       <table class = "list">
         	       		<tr>
         	       			<th>Item Name</th>
         	       			<th>Item Price</th>
@@ -159,13 +165,17 @@ $conn->close();
         	       		    	<td><?php echo( $products[$_SESSION["cart"][$i]] ); ?></td>
         	       		    	<td><?php echo( $_SESSION["qty"][$i] ); ?> </td>
         	       		    	<td><?php echo( $_SESSION["amounts"][$i] ); ?> </td>
-        	       		    	<td><a href="<?php echo "?id=" . $id . "&?delete=" . $i ?>">Delete from cart</a></td>
+        	       		    	<td><a href="?delete=<?php echo($i); ?>&id=<?php echo ($id)?>">Delete from cart</a></td>
         	       		    </tr>
         	       		    <?php $total = $total + $_SESSION["amounts"][$i];
         	       		}
         	       		    $_SESSION["total"] = $total;
         	       		?>
         	       		<tr>Total</tr>
+        	       		
+        	       		<tr>
+							<td><a href="?reset=true&id=<?php echo ($id)?>">Reset Cart</a></td>
+						</tr>
         	       </table>
         	       <?php
         	   }
