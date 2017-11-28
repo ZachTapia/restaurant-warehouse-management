@@ -6,6 +6,7 @@ session_start();
 $id = $_GET['id']; 
 
 
+
 //begin connection to sql
 $conn = new mysqli('localhost', 'ztapia', 'password', 'd2r');
 
@@ -25,7 +26,7 @@ $products = array();
 $productID = array();
 $amounts = array();
 $images = array();
-$warehouseFrom = array();
+
 
 $name = $result->fetch_assoc();
 
@@ -35,24 +36,51 @@ while($row = $resultInventory->fetch_assoc()) {
     $productID[] = $row['itemID'];
     $amounts[] = $row['itemPrice'];
     $images[] = $row['itemImage'];
-    $warehouseFrom[] = $row['warehouseID'];
+    
+}
+
+//remove items to cart, gets item from super global
+if ( isset($_GET["remove"]) ) {
+    $itemID = $_GET["remove"];
+    
+    $removeSQL = "DELETE FROM inventory WHERE itemID=" . $itemID;
+   
+    
+    if (mysqli_query($conn, $removeSQL)) {
+        echo "Record deleted successfully";
+        header("Refresh:0; url= modify_inventory.php?id=" . $id);
+        
+    } else {
+        echo "Error deleting record: " . mysqli_error($conn);
+    }
     
 }
 
 
 //add items to cart, gets item from super global
-if ( isset($_GET["purchase"]) ) {
-    $itemID = $_GET["purchase"];
+if ( isset($_GET["add"]) ) {
+    $warehouseID = $_GET["warehouseID"];
+    $itemName = $_GET["itemName"];
+    $itemType = $_GET["itemType"];
+    $itemPrice = $_GET["itemPrice"];
+    $itemLocation = $_GET["itemLocation"];
     
-    $itemName = $products[$itemID];
     
-    $qty = $_GET["qty"];
     
-    $price = $amounts[$itemID];
     
-    $total = $qty * $price;
+    $addSQL = "INSERT INTO inventory (warehouseID, itemName, itemType, itemPrice) VALUES ('" . $warehouseID . " ', '" . $itemName . "', '" . $itemType . "', '" . $itemPrice . "')";
+    
+    if (mysqli_query($conn, $addSQL)) {
+        echo "Record added successfully";
+        header("Refresh:0; url= modify_inventory.php?id=" . $id);
+
+        
+    } else {
+        echo "Error adding record: " . mysqli_error($conn);
+    }
     
 }
+
 
 
 //close connection
@@ -66,19 +94,13 @@ $conn->close();
         <title>Restaurant Area</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="../../stylesheets/styles.css"/>
-         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     </head>
     
     <body>
     
-        <header> 
-          <h1>Restaurant Area</h1>
-        </header>
-        
-<!-- This is the nav bar on top of the screen -->
-      
-     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-              <a class="navbar-brand" href="../restaurant.php"><img src="../../images/logo.png" width="65" height="65" class="d-inline-block align-top" alt=""></a>
+       <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <a class="navbar-brand" href="../warehouse.php"><img src="../../images/logo.png" width="65" height="65" class="d-inline-block align-top" alt=""></a>
 
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -87,7 +109,7 @@ $conn->close();
               <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav mr-auto">
                   <li class="nav-item active">
-                    <a class="nav-link" href="../restaurant.php">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="../warehouse.php">Home <span class="sr-only">(current)</span></a>
                   </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Pricing</a>
@@ -107,7 +129,6 @@ $conn->close();
               </div>
             </nav>
 
-
      
      
         <div id="content">
@@ -118,32 +139,21 @@ $conn->close();
                         <table class="responstable">
                     <tr>
                     
+                        <th>Item ID</th>
                         <th>Item Name</th>
                         <th>Item Price</th>
                         <th>Item Image</th>
-                                        <th>Actions</th>
-
-
                     
                     </tr>
                      <?php 
                      for($i = 0; $i < count($products); $i++) {
                          ?>
                          <tr>
+                            <td><?php echo ($productID[$i] ); ?></td>
                             <td><?php echo ($products[$i] ); ?></td>
                             <td><?php echo ($amounts[$i] ); ?></td>
-                            <td><image height="300" width = "300" src="<?php echo ($images[$i]); ?>"</td>
-                            <td>
-                            <form action="">
-                            Quantity: 
-                            <input type = "text" name = "qty" value = "1" >
-                            <input type = "hidden" name = "purchase" value = "<?php echo ($i)?>">
-                            <input type = "hidden" name = "id" value = "<?php echo ($id)?>">
-                            
-                            <input type = "submit" value = "Submit">
-                     
-                            </form></td>
-                            
+                         <td><image height="300" width = "300" src="<?php echo ($images[$i]); ?>"</td>
+                            <td><a href="?id=<?php echo ($id)?>&remove=<?php echo ($productID[$i])?>">Remove Item From Inventory</a></td>
                          </tr>
                          <?php 
                      }
@@ -152,26 +162,25 @@ $conn->close();
     
                 </table>
                 
+                <h3>Add an Item:</h3>
+                
+                <form action="">
+                            Item Name: <input type = "text" name = "itemName" value = "" > <br/>
+                            Item Type: <input type = "text" name = "itemType" value = "" > <br/>
+                            Item Price: <input type = "text" name = "itemPrice" value = "" > <br/>
+                            Item Location: <input type = "text" name = "itemLocation" value = "" > <br/>
+                            <input type = "hidden" name = "warehouseID" value = "<?php echo ($id)?>">
+                            <input type = "hidden" name = "id" value = "<?php echo ($id)?>">
+                            <input type = "hidden" name = "add" value = "true">
+                            <input type = "submit" value = "Submit">
+                     
+                            </form>
         </div>
         
-        <div id="shopping_cart">
-            
-            <h2><?php 
-            
-            if ( isset($_GET["purchase"]) ) {
-               echo "Thank you! <br/> You just purchased " . $qty . " x " . $itemName . "<br/>Each costing $" . $price . "<br/>With a total of $" . $total;
-     
-                
-                
-            }
-            
-            ?></h2>
-        </div>
         
-      <div class="footer-copyright">
-        <div class="container-fluid">
-          <center><footer>&copy; <?php echo date('Y'); ?> D2R</footer></center>
-        </div>
-    </div>      
+            
+      
+        <footer>&copy; <?php echo date('Y'); ?> D2R</footer>
+      
       </body>
 </html>

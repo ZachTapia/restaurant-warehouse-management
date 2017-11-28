@@ -22,37 +22,24 @@ $resultInventory = $conn->query($inventory);
 
 //define product arrays
 $products = array();
-$productID = array();
 $amounts = array();
 $images = array();
 $warehouseFrom = array();
+$locations = array();
 
 $name = $result->fetch_assoc();
 
 //put sql items into arrays
 while($row = $resultInventory->fetch_assoc()) {
     $products[] = $row['itemName'];
-    $productID[] = $row['itemID'];
     $amounts[] = $row['itemPrice'];
     $images[] = $row['itemImage'];
     $warehouseFrom[] = $row['warehouseID'];
-    
+    $locations[] = $row['itemLocation'];
 }
 
 
-//add items to cart, gets item from super global
-if ( isset($_GET["purchase"]) ) {
-    $itemID = $_GET["purchase"];
-    
-    $itemName = $products[$itemID];
-    
-    $qty = $_GET["qty"];
-    
-    $price = $amounts[$itemID];
-    
-    $total = $qty * $price;
-    
-}
+
 
 
 //close connection
@@ -63,22 +50,15 @@ $conn->close();
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Restaurant Area</title>
+        <title>Warehouse Area</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="../../stylesheets/styles.css"/>
-         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     </head>
     
     <body>
-    
-        <header> 
-          <h1>Restaurant Area</h1>
-        </header>
-        
-<!-- This is the nav bar on top of the screen -->
-      
-     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-              <a class="navbar-brand" href="../restaurant.php"><img src="../../images/logo.png" width="65" height="65" class="d-inline-block align-top" alt=""></a>
+   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <a class="navbar-brand" href="../warehouse.php"><img src="../../images/logo.png" width="65" height="65" class="d-inline-block align-top" alt=""></a>
 
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -87,7 +67,7 @@ $conn->close();
               <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav mr-auto">
                   <li class="nav-item active">
-                    <a class="nav-link" href="../restaurant.php">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="../warehouse.php">Home <span class="sr-only">(current)</span></a>
                   </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Pricing</a>
@@ -107,8 +87,6 @@ $conn->close();
               </div>
             </nav>
 
-
-     
      
         <div id="content">
      
@@ -121,9 +99,6 @@ $conn->close();
                         <th>Item Name</th>
                         <th>Item Price</th>
                         <th>Item Image</th>
-                                        <th>Actions</th>
-
-
                     
                     </tr>
                      <?php 
@@ -133,16 +108,7 @@ $conn->close();
                             <td><?php echo ($products[$i] ); ?></td>
                             <td><?php echo ($amounts[$i] ); ?></td>
                             <td><image height="300" width = "300" src="<?php echo ($images[$i]); ?>"</td>
-                            <td>
-                            <form action="">
-                            Quantity: 
-                            <input type = "text" name = "qty" value = "1" >
-                            <input type = "hidden" name = "purchase" value = "<?php echo ($i)?>">
-                            <input type = "hidden" name = "id" value = "<?php echo ($id)?>">
-                            
-                            <input type = "submit" value = "Submit">
-                     
-                            </form></td>
+                            <td><?php echo ($locations[$i] ); ?></td>
                             
                          </tr>
                          <?php 
@@ -154,24 +120,9 @@ $conn->close();
                 
         </div>
         
-        <div id="shopping_cart">
-            
-            <h2><?php 
-            
-            if ( isset($_GET["purchase"]) ) {
-               echo "Thank you! <br/> You just purchased " . $qty . " x " . $itemName . "<br/>Each costing $" . $price . "<br/>With a total of $" . $total;
-     
-                
-                
-            }
-            
-            ?></h2>
-        </div>
-        
-      <div class="footer-copyright">
-        <div class="container-fluid">
-          <center><footer>&copy; <?php echo date('Y'); ?> D2R</footer></center>
-        </div>
-    </div>      
+    
+      
+        <footer>&copy; <?php echo date('Y'); ?> D2R</footer>
+      
       </body>
 </html>
